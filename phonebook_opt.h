@@ -23,8 +23,14 @@ typedef struct __FIND_NAME_ENTRY {
     struct __FIND_NAME_ENTRY *pNext;
 } entry;
 
+typedef struct __HASH_TABLE {
+    int size;
+    struct entry **table;
+} hashtable;
 
-entry *findName(char lastname[], entry *pHead);
-entry *append(char lastName[], entry *e);
+entry *findName(char *lastName, hashtable *hash);
+entry *append(char *lastName, hashtable *hash);
+hashtable *CreateTable(int size);
+int hash_djb2(hashtable *hash, char *findName);
 
 #endif
