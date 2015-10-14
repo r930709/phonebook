@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
         printf("cannot open the file\n");
         return -1;
     }
-
     /* build the entry */
     entry *pHead, *e;
     pHead = (entry *) malloc(sizeof(entry));
@@ -46,6 +45,8 @@ int main(int argc, char *argv[])
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
 #endif
+
+#if defined(ORIG)
     clock_gettime(CLOCK_REALTIME, &start);
     while (fgets(line, sizeof(line), fp)) {
         while (line[i] != '\0')
@@ -56,6 +57,19 @@ int main(int argc, char *argv[])
     }
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time1 = diff_in_second(start, end);
+#endif
+#if defined(OPT)
+    clock_gettime(CLOCK_REALTIME, &start);
+    while (fgets(line, sizeof(line), fp)) {
+        while (line[i] != '\0')
+            i++;
+        line[i - 1] = '\0';
+        i = 0;
+        e = append(line, e);
+    }
+    clock_gettime(CLOCK_REALTIME, &end);
+    cpu_time1 = diff_in_second(start, end);
+#endif
 
     /* close file as soon as possible */
     fclose(fp);
@@ -73,11 +87,20 @@ int main(int argc, char *argv[])
 #if defined(__GNUC__)
     __builtin___clear_cache((char *) pHead, (char *) pHead + sizeof(entry));
 #endif
+#if defined(ORIG)
     /* compute the execution time */
     clock_gettime(CLOCK_REALTIME, &start);
     findName(input, e);
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time2 = diff_in_second(start, end);
+#endif
+#if defined(OPT)
+    /* compute the execution time */
+    clock_gettime(CLOCK_REALTIME, &start);
+    findName(input, e);
+    clock_gettime(CLOCK_REALTIME, &end);
+    cpu_time2 = diff_in_second(start, end);
+#endif
 
     printf("execution time of append() : %lf sec\n", cpu_time1);
     printf("execution time of findName() : %lf sec\n", cpu_time2);
